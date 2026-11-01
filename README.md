@@ -1,6 +1,6 @@
 # motion
 
-Agent skill `/motion`: turn any topic into a sourced, deterministic HTML explainer video, with optional free local voice-over. Part of OneStack.
+Agent skill `/motion`: turn any topic into a sourced, deterministic HTML explainer video, with optional free voice-over. Part of OneStack.
 
 ## What it does
 
@@ -20,7 +20,7 @@ Output: `<topic>.html` (plus `voice/` with `--voice`), a review sheet, the list 
 node scripts/check.mjs motion.html          # 0 errors before delivery
 node scripts/render.mjs motion.html --sheet # review frames + sheet.png
 node scripts/render.mjs motion.html --mp4   # video with narration (ffmpeg)
-node scripts/voice.mjs vo.json              # narration clips (macOS say or Piper)
+node scripts/voice.mjs vo.json              # narration clips (macOS say, Piper or edge-tts)
 ```
 
 ## Install
@@ -32,7 +32,7 @@ From OneStack: `./sync-install.sh` — or copy this folder as `<skills dir>/moti
 - Node 18+.
 - `check` and `render`: Playwright 1.64.1, installed once into `~/.cache/motion-skill/` (never globally), with its Chromium.
 - `--mp4`: ffmpeg (`brew install ffmpeg`).
-- `--voice`: macOS `say` (built in) or [Piper](https://github.com/rhasspy/piper) with a voice model. No paid service.
+- `--voice`: macOS `say` (built in) or [Piper](https://github.com/rhasspy/piper) with a voice model, both local; or, opt-in, [edge-tts](https://github.com/rany2/edge-tts) 7.3.1 run through `uvx` (Microsoft neural voices, online: the text goes to Microsoft through an unofficial client). No paid service.
 
 ## Layout
 
