@@ -191,11 +191,14 @@ body.render .bar, body.render .hint { display: none; }
   const sync = (t, playing) => {
     for (const { vo, s } of scenes) {
       if (!vo) continue;
-      const local = t - s[0], inside = playing && local >= 0 && local < (vo.duration || s[1] - s[0]);
-      if (inside && vo.paused) { vo.currentTime = local; vo.play().catch(() => {}); }
+      // a clip ends on its own; it is only stopped when playback stops or leaves its scene
+      const local = t - s[0], inside = playing && local >= 0 && local < s[1] - s[0];
+      if (inside && vo.paused && local < (vo.duration || Infinity) - 0.05) { vo.currentTime = local; vo.play().catch(() => {}); }
       else if (!inside && !vo.paused) vo.pause();
     }
   };
+  // After a jump in t (restart, scrub), stop every clip so sync restarts them at the right offset.
+  const jump = () => scenes.forEach(({ vo }) => vo && !vo.paused && vo.pause());
 
   let t = 0, playing = !render && !matchMedia('(prefers-reduced-motion: reduce)').matches, last = null;
   const btn = document.getElementById('play'), scrub = document.getElementById('scrub'), clock = document.getElementById('clock');
@@ -204,15 +207,15 @@ body.render .bar, body.render .hint { display: none; }
     if (playing) { if (last !== null) t += (now - last) / 1000; if (t >= T) { t = T; playing = false; } show(); }
     last = now; requestAnimationFrame(tick);
   };
-  const toggle = () => { if (t >= T) t = 0; playing = !playing; show(); };
+  const toggle = () => { if (t >= T) { t = 0; jump(); } playing = !playing; show(); };
   btn.addEventListener('click', toggle);
-  scrub.addEventListener('input', () => { t = +scrub.value; playing = false; show(); });
+  scrub.addEventListener('input', () => { t = +scrub.value; playing = false; jump(); show(); });
   addEventListener('keydown', e => {
     if (render) return;
     if (e.code === 'Space') { e.preventDefault(); toggle(); }
     else if (e.key === 'ArrowRight') { playing = false; t = Math.min(T, t + 1 / 60); show(); }
     else if (e.key === 'ArrowLeft') { playing = false; t = Math.max(0, t - 1 / 60); show(); }
-    else if (e.key === 'r' || e.key === 'R') { t = 0; playing = true; show(); }
+    else if (e.key === 'r' || e.key === 'R') { t = 0; playing = true; jump(); show(); }
   });
   // With reduced motion, show a representative frame of the hook.
   if (!playing && !render) t = Math.min(4.5, T);
