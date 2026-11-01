@@ -31,14 +31,16 @@ body.render .wrap { max-width: none; display: block; }
 body.render .frame { border: 0; }
 body.render .bar, body.render .hint { display: none; }
 
-/* Grid: --mx is the side margin (140px at 16:9, 90px at 9:16 and 1:1). */
-#stage { --mx: 140px; }
-#stage[data-format="9:16"], #stage[data-format="1:1"] { --mx: 90px; }
-.eyebrow { position: absolute; left: var(--mx); top: 96px; font: 600 20px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; }
+/* Grid: --mx side margin, --top eyebrow top, --foot .src/.tag bottom, --rule .rule bottom.
+   9:16 needs larger vertical margins: its 90% safe area leaves 96px top and bottom. */
+#stage { --mx: 140px; --top: 96px; --foot: 84px; --rule: 140px; }
+#stage[data-format="1:1"] { --mx: 90px; }
+#stage[data-format="9:16"] { --mx: 90px; --top: 140px; --foot: 130px; --rule: 190px; }
+.eyebrow { position: absolute; left: var(--mx); top: var(--top); font: 600 20px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; }
 .eyebrow span { color: var(--mute); }
-.src { position: absolute; left: var(--mx); bottom: 84px; font: 400 19px/1.4 var(--mono); color: var(--mute); }
-.tag { position: absolute; right: var(--mx); bottom: 84px; font: 500 17px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--mute); border: 1px solid var(--line); padding: 10px 14px; }
-.rule { position: absolute; left: var(--mx); right: var(--mx); bottom: 140px; height: 1px; background: var(--line); }
+.src { position: absolute; left: var(--mx); bottom: var(--foot); font: 400 19px/1.4 var(--mono); color: var(--mute); }
+.tag { position: absolute; right: var(--mx); bottom: var(--foot); font: 500 17px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--mute); border: 1px solid var(--line); padding: 10px 14px; }
+.rule { position: absolute; left: var(--mx); right: var(--mx); bottom: var(--rule); height: 1px; background: var(--line); }
 #prog { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--ink); width: 0; }
 .scene { position: absolute; inset: 0; opacity: 0; }
 .m { overflow: hidden; display: block; }
